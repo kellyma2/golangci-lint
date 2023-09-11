@@ -15,6 +15,8 @@ import (
 type EnvKey string
 
 const (
+	EnvGoCmd string = "GOLANGCI_LINT_GOCMD"
+
 	EnvGoCache EnvKey = "GOCACHE"
 	EnvGoRoot  EnvKey = "GOROOT"
 )
@@ -34,10 +36,15 @@ func NewEnv(log logutils.Log) *Env {
 }
 
 func (e *Env) Discover(ctx context.Context) error {
+	goCmd := os.Getenv(EnvGoCmd)
+	if goCmd == "" {
+		goCmd = "go"
+	}
+
 	startedAt := time.Now()
 	args := []string{"env", "-json"}
 	args = append(args, string(EnvGoCache), string(EnvGoRoot))
-	out, err := exec.CommandContext(ctx, "go", args...).Output()
+	out, err := exec.CommandContext(ctx, goCmd, args...).Output()
 	if err != nil {
 		return fmt.Errorf("failed to run 'go env': %w", err)
 	}
