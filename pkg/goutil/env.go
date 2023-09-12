@@ -38,7 +38,10 @@ func NewEnv(log logutils.Log) *Env {
 func (e *Env) Discover(ctx context.Context) error {
 	goCmd := os.Getenv(EnvGoCmd)
 	if goCmd == "" {
+		fmt.Println("Using default goCmd")
 		goCmd = "go"
+	} else {
+		fmt.Println("Using " + goCmd)
 	}
 
 	startedAt := time.Now()
